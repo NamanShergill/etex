@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
         Column(
           children: <Widget>[
             Container(
-              constraints: BoxConstraints(minHeight: 150),
+              constraints: BoxConstraints(minHeight: 130),
               height: _media.height*0.19,
               child: Stack(
                 children: <Widget>[
@@ -65,24 +65,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   Align(
                     alignment: Alignment.center,
                     child: Container(
-                        height: 65,
+                      constraints: BoxConstraints(minHeight: 50),
+                        height: _media.height*0.08,
                         child: Image.asset('assets/logo.png')),
                   ),
                 ],
               ),
             ),
             Container(
-              constraints: BoxConstraints(
-                maxHeight: _media.height-150,
-              ),
+              constraints: BoxConstraints(maxHeight: _media.height-130),
               height: _media.height*0.81,
               child: SingleChildScrollView(
                 physics: BouncingScrollPhysics(),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(
-                      height: 50,
-                    ),
+                    space(_media),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
@@ -98,38 +96,35 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Icon(
                               Icons.favorite,
                               color: Colors.red,
-                              size: 60,
+                              size: _media.height*0.08,
                             ),
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            counter(x),
-                            counter(y),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text("BPM", style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),),
-                          ],
-                        ),
                       ],
                     ),
-                    SizedBox(
-                      height: 50,
-                    ),
+                    space(_media),
                     Container(
-                      height: 300,
+                      height: _media.height*0.35,
                       width: _media.width,
                       color: Colors.grey.shade200,
                       child: Align(
-                        alignment: Alignment.center,
+                          alignment: Alignment.center,
                           child: Text("GRAPH PLACEHOLDER", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
                       ),
                     ),
-                    SizedBox(
-                      height: 50,
+                    space(_media),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        counter(x, _media),
+                        counter(y,_media),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text("BPM", style: TextStyle(fontSize: _media.height*0.05, fontWeight: FontWeight.bold),),
+                      ],
                     ),
+                    space(_media),
                   ],
                 ),
               ),
@@ -140,14 +135,21 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-Widget counter(var num){
+Widget counter(var num, final _media){
   return Container(
     child: Card(
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(num.toString(), style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),),
+        child: Text(num.toString(), style: TextStyle(fontSize: _media.height*0.05, fontWeight: FontWeight.bold),),
       ),
     ),
   );
+}
+
+Widget space(final _media){
+  return
+    SizedBox(
+      height: _media.height*0.05,
+    );
 }
