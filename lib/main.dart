@@ -1,155 +1,115 @@
+/// Demo of using the oscilloscope package
+///
+/// In this demo 2 displays are generated showing the outputs for Sine & Cosine
+/// The scope displays will show the data sets  which will fill the yAxis and then the screen display will 'scroll'
 import 'package:flutter/material.dart';
 import 'package:oscilloscope/oscilloscope.dart';
-import 'package:wave/config.dart';
-import 'dart:async';
 import 'dart:math';
-import 'package:wave/wave.dart';
-import 'package:animator/animator.dart';
+import 'dart:async';
+import 'dart:io';
 
-void main() => runApp(MyApp());
+void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Placeholder',
-      theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
-      ),
-      home: MyHomePage(title: 'Prototype'),
+    return new MaterialApp(
+      title: "Oscilloscope Display Example",
+      home: Shell(),
     );
   }
 }
 
-var x=6;
-var y=2;
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
-
+class Shell extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _ShellState createState() => _ShellState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _ShellState extends State<Shell> {
+  List<double> traceSine = List();
+  double radians = 0.0;
+  Timer _timer;
+  bool check=true;
+  var A=[];
+  var c=0.0;
+
+
+  /// method to generate a Test  Wave Pattern Sets
+  /// this gives us a value between +1  & -1 for sine & cosine4
+
+  _generateTrace(Timer t) {
+
+    var a=0.0;
+    for(int i=0;i<100;i++) {
+      if (check) {
+        a = A[i];
+      }
+      setState(() {
+        traceSine.add(a);
+      });
+
+    }
+  }
+
+  @override
+  initState() {
+    super.initState();
+    // create our timer to generate test values
+    for(int i=0;i<100;i++)
+      {
+        if(i<20||i>69)
+          A.add(0.0);
+        else if(i<25) {
+          c-=0.025;
+          A.add(c);
+        }
+        else if(i<30){
+          c+=0.025;
+          A.add(c);
+        }
+        else if(i<50){
+          c+=0.05;
+          A.add(c);
+        }
+        else if(i<70){
+          c-=0.05;
+          A.add(c);
+        }
+      }
+    _timer = Timer.periodic(Duration(milliseconds: 1000), _generateTrace);
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final _media= MediaQuery.of(context).size;
+    // Create A Scope Display for Sine
+    Oscilloscope scopeOne = Oscilloscope(
+      showYAxis: true,
+      yAxisColor: Colors.orange,
+      padding: 20.0,
+      backgroundColor: Colors.black,
+      traceColor: Colors.green,
+      yAxisMax: 1.0,
+      yAxisMin: -1.0,
+      dataSet: traceSine,
+    );
+
+    // Create A Scope Display for Cosine
+    // Generate the Scaffold
     return Scaffold(
-      body:
-        Column(
-          children: <Widget>[
-            Container(
-              constraints: BoxConstraints(minHeight: 130),
-              height: _media.height*0.19,
-              child: Stack(
-                children: <Widget>[
-                  WaveWidget(
-                    config: CustomConfig(
-                      colors: [
-                        Colors.white70,
-                        Colors.white54,
-                        Colors.white30,
-                        Colors.grey.shade50,
-                      ],
-                      durations: [32000, 21000, 18000, 5000],
-                      heightPercentages: [0.8, 0.87, 0.95, 1.0],
-                    ),
-                    backgroundColor: Colors.black87,
-                    size: Size(double.infinity, double.infinity),
-                    waveAmplitude: 1,
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      constraints: BoxConstraints(minHeight: 50),
-                        height: _media.height*0.08,
-                        child: Image.asset('assets/logo.png')),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              constraints: BoxConstraints(maxHeight: _media.height-130),
-              height: _media.height*0.81,
-              child: SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    space(_media),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: <Widget>[
-                        Animator(
-                          tween: Tween<double>(
-                              begin: 0.8,
-                              end: 1.4
-                          ),
-                          curve: Curves.elasticOut,
-                          cycles: 0,
-                          builder: (anim) => Transform.scale(
-                            scale: anim.value,
-                            child: Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                              size: _media.height*0.08,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    space(_media),
-                    Container(
-                      height: _media.height*0.35,
-                      width: _media.width,
-                      color: Colors.grey.shade200,
-                      child: Align(
-                          alignment: Alignment.center,
-                          child: Text("GRAPH PLACEHOLDER", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)
-                      ),
-                    ),
-                    space(_media),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        counter(x, _media),
-                        counter(y,_media),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text("BPM", style: TextStyle(fontSize: _media.height*0.05, fontWeight: FontWeight.bold),),
-                      ],
-                    ),
-                    space(_media),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        )
+      appBar: AppBar(
+        title: Text("OscilloScope Demo"),
+      ),
+      body: Column(
+        children: <Widget>[
+          Expanded(flex: 1, child: scopeOne),
+        ],
+      ),
     );
   }
-}
-
-Widget counter(var num, final _media){
-  return Container(
-    child: Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(num.toString(), style: TextStyle(fontSize: _media.height*0.05, fontWeight: FontWeight.bold),),
-      ),
-    ),
-  );
-}
-
-Widget space(final _media){
-  return
-    SizedBox(
-      height: _media.height*0.05,
-    );
 }
