@@ -54,7 +54,6 @@ class _MyHomePageState extends State<MyHomePage> {
     a = A[c];
     c++;
     setState(() {
-      if(c==A.length)                             //code for changing bpm
       traceSine.add(a);
     });
     if(c>=A.length)
