@@ -30,8 +30,8 @@ class _ShellState extends State<Shell> {
   double radians = 0.0;
   Timer _timer;
   bool check=true;
-  var A=[];
-  var c=0.0;
+  var A=[0.0,0.0,0.0,0.05,0.1,0.15,0.1,0.05,0.0,0.0,0.0,0.0,0.0,-0.025,0.0,0.1,0.2,0.3,0.4,0.4,0.3,0.2,0.1,0.0,-0.1,-0.05,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+  var c=0;
 
 
   /// method to generate a Test  Wave Pattern Sets
@@ -40,43 +40,20 @@ class _ShellState extends State<Shell> {
   _generateTrace(Timer t) {
 
     var a=0.0;
-    for(int i=0;i<100;i++) {
-      if (check) {
-        a = A[i];
-      }
-      setState(() {
-        traceSine.add(a);
-      });
+    a = A[c];
+    c++;
+    setState(() {
+       traceSine.add(a);
+     });
+    if(c>=A.length)
+      c=0;
 
-    }
   }
 
   @override
   initState() {
     super.initState();
-    // create our timer to generate test values
-    for(int i=0;i<100;i++)
-      {
-        if(i<20||i>69)
-          A.add(0.0);
-        else if(i<25) {
-          c-=0.025;
-          A.add(c);
-        }
-        else if(i<30){
-          c+=0.025;
-          A.add(c);
-        }
-        else if(i<50){
-          c+=0.05;
-          A.add(c);
-        }
-        else if(i<70){
-          c-=0.05;
-          A.add(c);
-        }
-      }
-    _timer = Timer.periodic(Duration(milliseconds: 1000), _generateTrace);
+     _timer = Timer.periodic(Duration(milliseconds: 30), _generateTrace);
   }
 
   @override
