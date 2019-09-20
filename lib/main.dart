@@ -32,7 +32,8 @@ class _ShellState extends State<Shell> {
   bool check=true;
   var A=[0.0,0.0,0.0,0.05,0.1,0.15,0.1,0.05,0.0,0.0,0.0,0.0,0.0,-0.025,0.0,0.1,0.2,0.3,0.4,0.4,0.3,0.2,0.1,0.0,-0.1,-0.05,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
   var c=0;
-
+  var rng= new Random();
+  var bpm;
 
   /// method to generate a Test  Wave Pattern Sets
   /// this gives us a value between +1  & -1 for sine & cosine4
@@ -43,7 +44,9 @@ class _ShellState extends State<Shell> {
     a = A[c];
     c++;
     setState(() {
-       traceSine.add(a);
+      if(c==A.length)                               //it changes everytime heartbeat resets
+        bpm=63+rng.nextInt(12);                     //code for changing bpm
+      traceSine.add(a);
      });
     if(c>=A.length)
       c=0;
